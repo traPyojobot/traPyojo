@@ -1,13 +1,13 @@
 package domain
 
 import (
+	"net/http"
 	"time"
-
-	"github.com/gofrs/uuid"
 )
 
 type Tweet struct {
-	ID        uuid.UUID
+	ID        int64
+	Response  *http.Response
 	Content   string
 	CreatedAt time.Time
 }

@@ -5,6 +5,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"time"
 
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/traPyojobot/traPyojo/domain"
@@ -24,7 +25,7 @@ func NewTwitterAPI() (external.TwitterAPI, error) {
 
 	ctx := context.Background()
 
-	var s string //TODO
+	var s string
 	var sc = bufio.NewScanner(os.Stdin)
 	if sc.Scan() {
 		s = sc.Text()
@@ -42,5 +43,21 @@ func NewTwitterAPI() (external.TwitterAPI, error) {
 }
 
 func (twitter *TwitterAPI) PostTweet(content string) (*domain.Tweet, error) {
-	return nil, nil //TODO
+	tweet, resp, err := twitter.Client.Statuses.Update(content, nil)
+	if err != nil {
+		return &domain.Tweet{Response: resp}, err
+	}
+
+	res := &domain.Tweet{
+		ID:        tweet.ID,
+		Response:  resp,
+		Content:   tweet.FullText,
+		CreatedAt: ConvertToTime(tweet.CreatedAt),
+	}
+	return res, err
+}
+
+func ConvertToTime(str string) time.Time {
+	t, _ := time.Parse(str, str) //TODO エラーハンドリングをすべきかも
+	return t
 }
