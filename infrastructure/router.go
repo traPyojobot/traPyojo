@@ -27,8 +27,8 @@ func Init() {
 		log.Fatal(err)
 	}
 
-	echoApi := e.Group("/api")
-	v1 := echoApi.Group("/v1")
+	echoAPI := e.Group("/api")
+	v1 := echoAPI.Group("/v1")
 	{
 		v1.GET("/ping", handler.PingHandler)
 

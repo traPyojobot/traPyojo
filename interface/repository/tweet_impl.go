@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	GatewayEndpoint string = os.Getenv("GatewayEndpoint")
+	GatewayEndpoint = os.Getenv("GatewayEndpoint")
 )
 
 type TweetRepository struct {
@@ -30,6 +30,7 @@ func (repo *TweetRepository) GetMonologue() (*domain.Monologue, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -39,6 +40,7 @@ func (repo *TweetRepository) GetMonologue() (*domain.Monologue, error) {
 	if err := json.Unmarshal(body, monologue); err != nil {
 		return nil, err
 	}
+
 	return monologue, nil
 }
 
@@ -47,5 +49,6 @@ func (repo *TweetRepository) PostMonologue(content string) (*domain.Tweet, error
 	if err != nil {
 		return nil, err
 	}
+
 	return res, nil
 }

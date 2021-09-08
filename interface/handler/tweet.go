@@ -21,6 +21,7 @@ type MonologueResponse struct {
 
 func (h *TweetHandler) PostMonologueHandler(c echo.Context) error {
 	ctx := c.Request().Context()
+
 	monologue, err := h.srv.GetMonologue(ctx)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

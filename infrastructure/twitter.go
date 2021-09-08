@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"bufio"
 	"context"
+	"errors"
 	"log"
 	"os"
 	"time"
@@ -26,8 +27,7 @@ func NewTwitterAPI() (external.TwitterAPI, error) {
 	ctx := context.Background()
 
 	var s string
-	var sc = bufio.NewScanner(os.Stdin)
-	if sc.Scan() {
+	if sc := bufio.NewScanner(os.Stdin); sc.Scan() {
 		s = sc.Text()
 	}
 
@@ -39,6 +39,7 @@ func NewTwitterAPI() (external.TwitterAPI, error) {
 	httpClient := config.Client(ctx, token)
 
 	client := twitter.NewClient(httpClient)
+
 	return &TwitterAPI{Client: client}, nil
 }
 
@@ -48,16 +49,26 @@ func (twitter *TwitterAPI) PostTweet(content string) (*domain.Tweet, error) {
 		return &domain.Tweet{Response: resp}, err
 	}
 
+	ca, err := ConvertToTime(tweet.CreatedAt)
+	if err != nil {
+		return &domain.Tweet{Response: resp}, err
+	}
+
 	res := &domain.Tweet{
 		ID:        tweet.ID,
 		Response:  resp,
 		Content:   tweet.FullText,
-		CreatedAt: ConvertToTime(tweet.CreatedAt),
+		CreatedAt: ca,
 	}
+
 	return res, err
 }
 
-func ConvertToTime(str string) time.Time {
-	t, _ := time.Parse(str, str) //TODO エラーハンドリングをすべきかも
-	return t
+func ConvertToTime(str string) (time.Time, error) {
+	t, err := time.Parse(str, str)
+	if err != nil {
+		return time.Time{}, errors.New("invalid timestamp")
+	}
+
+	return t, nil
 }

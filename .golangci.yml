@@ -1,0 +1,21 @@
+linters:
+  enable:
+    # default
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - structcheck
+    - unused
+    - varcheck
+    # option
+    - godox
+    - gomnd
+    - nlreturn
+    - ifshort
+    - predeclared
+    - revive
+    - tagliatelle
+    - wsl
